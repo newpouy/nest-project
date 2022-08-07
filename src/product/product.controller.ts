@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
-import { Product } from './interface/product.interface';
+import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
+import { Product } from './product.entity';
 import { ProductService } from './product.service';
 
 @Controller('products')
@@ -8,12 +8,12 @@ export class ProductController {
 
   @Get()
   async getProducts(@Res() res): Promise<Product[]> {
-    console.log('in getProducts')
-    return this.productService.getProducts(res);
+    const products = await this.productService.findAll();
+    return res.status(HttpStatus.OK).json(products);
   }
   @Get(':id')
-  getProductById(@Param() params): string {
+  getProductById(@Param() params): Promise<Product> {
     console.log(params.id);
-    return this.productService.getProductById(params.id);
+    return this.productService.findOne(params.id);
   }
 }
